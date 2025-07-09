@@ -49,8 +49,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -125,13 +127,23 @@ fun DrawSenseScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0x4DE1DEFD), // Warna pertama
-                        Color.White,
-                        Color(0x99E1DEFD),
+                if (showResultOnly) {
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xCC50A1FF),
+                            Color(0xFFD8D4FC),
+                            Color(0xCCD1B0EF)  // Ungu lembut
+                        )
                     )
-                )
+                } else {
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x4DE1DEFD),
+                            Color.White,
+                            Color(0x99E1DEFD),
+                        )
+                    )
+                }
             )
     ) {
         if (!showResultOnly) {
@@ -326,37 +338,76 @@ fun DrawSenseScreen(
                     ) {
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(
-                                    style = SpanStyle(
-                                        brush = Brush.linearGradient(
-                                            colors = listOf(
-                                                Color(0xFF7BB7FC),
-                                                Color(0xFF30E0B6)
-                                            )
-                                        ),
-                                        fontSize = 22.sp,
-                                        fontWeight = FontWeight.Bold
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(50))
+                                .background(
+                                    Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.4f),
+                                            Color.White.copy(alpha = 0.0f)
+                                        )
                                     )
-                                ) {
-                                    append("What Your Drawing")
-                                }
+                                )
+                                .border(1.dp, Color.White, RoundedCornerShape(50))
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.frame_26),
+                                    contentDescription = "Test Icon",
+                                    modifier = Modifier.size(20.dp)
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = "Test Result",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    style = TextStyle(
+                                        shadow = Shadow(
+                                            color = Color(0x55000000),
+                                            offset = Offset(0f, 1f),
+                                            blurRadius = 2f
+                                        )
+                                    )
+                                )
                             }
-                        )
+                        }
 
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(22.dp))
 
-                        Text(
-                            text = "May Reveal . . .",
-                            fontSize = 16.sp,
-                            color = Color(0xFF333333),
-                            fontWeight = FontWeight.Medium
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "DrawSense AI Analysis",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 22.sp,
+                                style = TextStyle(
+                                    shadow = Shadow(
+                                        color = Color(0x55000000),
+                                        offset = Offset(0f, 1f),
+                                        blurRadius = 2f
+                                    )
+                                )
+                            )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
 
+                            Image(
+                                painter = painterResource(id = R.drawable.frame_27),
+                                contentDescription = "Test Icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
 
+                        Spacer(modifier = Modifier.height(24.dp))
 
                         if (loading) {
                             var isVisible by remember { mutableStateOf(true) }
@@ -395,19 +446,19 @@ fun DrawSenseScreen(
 
                                 Text(
                                     text = "Analyzing the image, please wait...",
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        brush = Brush.linearGradient(
-                                            colors = listOf(
-                                                Color(0xFF7BB7FC), // Blue
-                                                Color(0xFF30E0B6)  // Light Green
-                                            )
-                                        )
-                                    ),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White,
                                     modifier = Modifier
-                                        .alpha(alpha) // Apply fade animation
-                                        .align(Alignment.CenterHorizontally)
+                                        .alpha(alpha)
+                                        .align(Alignment.CenterHorizontally),
+                                    style = TextStyle(
+                                        shadow = Shadow(
+                                            color = Color(0x33000000),
+                                            offset = Offset(1f, 1f),
+                                            blurRadius = 2f
+                                        )
+                                    )
                                 )
 
                                 Spacer(modifier = Modifier.height(48.dp))
@@ -431,15 +482,16 @@ fun DrawSenseScreen(
 
                             var textToShow by remember { mutableStateOf("") }
                             val resultText = result ?: "Belum ada hasil."
-                            val characterDelay = 1L
+                            val characterDelay = 2L
 
                             LaunchedEffect(resultText) {
                                 textToShow = ""
-                                resultText.forEachIndexed { index, _ ->
-                                    delay(characterDelay * index)
-                                    textToShow += resultText[index]
+                                resultText.forEach { char ->
+                                    textToShow += char
+                                    delay(characterDelay)
                                 }
                             }
+
 
                             Box(
                                 modifier = Modifier
@@ -447,8 +499,8 @@ fun DrawSenseScreen(
                                     .background(
                                         Brush.horizontalGradient(
                                             listOf(
-                                                Color(0xFFE4D9FF),
-                                                Color(0xFFB9EAFF)
+                                                Color(0x663B00FF),
+                                                Color(0x6624CDFF)
                                             )
                                         ),
                                         shape = RoundedCornerShape(16.dp)
@@ -458,7 +510,15 @@ fun DrawSenseScreen(
                                 Text(
                                     text = textToShow,
                                     fontSize = 14.sp,
-                                    color = Color(0xFF333333)
+                                    color = Color.White,
+                                    lineHeight = 20.sp,
+                                    style = TextStyle(
+                                        shadow = Shadow(
+                                            color = Color(0x33000000), // abu-abu gelap semi transparan
+                                            offset = Offset(1f, 1f),
+                                            blurRadius = 2f
+                                        )
+                                    )
                                 )
                             }
 
@@ -475,14 +535,21 @@ fun DrawSenseScreen(
                                         imageVector = Icons.Default.Warning,
                                         contentDescription = null,
                                         tint = Color(0xFFFFA726),
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(24.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = "Reminder",
-                                        fontSize = 18.sp,
+                                        fontSize = 22.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF333333)
+                                        color = Color.White,
+                                        style = TextStyle(
+                                            shadow = Shadow(
+                                                color = Color(0x33000000), // abu-abu gelap semi transparan
+                                                offset = Offset(1f, 1f),
+                                                blurRadius = 2f
+                                            )
+                                        )
                                     )
                                 }
                             }
@@ -493,12 +560,35 @@ fun DrawSenseScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
-                                    text = "This is not a clinical diagnosis, but a gentle, reflective interpretation based on Karen Machover’s projective theory. Things like your mood, drawing style, and recent experiences can all influence the outcome.",
+                                    text = buildAnnotatedString {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append("This is not a clinical diagnosis")
+                                        }
+                                        append(", but a gentle, reflective interpretation based on Karen Machover’s projective theory. Things like your mood, drawing style, and recent experiences can all influence the outcome. ")
+
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append("Give insights into your personality and emotional state.")
+                                        }
+                                    },
                                     style = TextStyle(
-                                        textAlign = TextAlign.Justify,
                                         fontSize = 14.sp,
                                         lineHeight = 20.sp,
+                                        textAlign = TextAlign.Justify,
                                         letterSpacing = TextUnit.Unspecified,
+                                        color = Color.White,
+                                        shadow = Shadow(
+                                            color = Color(0x33000000),
+                                            offset = Offset(1f, 1f),
+                                            blurRadius = 2f
+                                        )
                                     ),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -511,34 +601,51 @@ fun DrawSenseScreen(
                                     colors = listOf(Color(0xFF7BB7FC), Color(0xFF00E6C0))
                                 )
 
-                                Text(
-                                    text = buildAnnotatedString {
-                                        withStyle(SpanStyle(brush = gradientBrush)) {
-                                            append("Book a session with a ")
-                                        }
-                                        withStyle(
-                                            SpanStyle(
-                                                brush = gradientBrush,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        ) {
-                                            append("licensed art therapist")
-                                        }
-                                        withStyle(SpanStyle(brush = gradientBrush)) {
-                                            append(" to explore your results in a supportive space.")
-                                        }
-                                    },
-                                    style = TextStyle(
-                                        fontSize = 14.sp,
-                                        lineHeight = 22.sp,
-                                        textAlign = TextAlign.Justify
-                                    ),
+                                Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 1.dp)
-                                )
+                                        .padding(5.dp)
+                                        .background(
+                                            brush = Brush.horizontalGradient(
+                                                listOf(
+                                                    Color.White.copy(alpha = 0.4f),
+                                                    Color.White.copy(alpha = 0f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(24.dp)
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(24.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 16.dp)
+                                ) {
+                                    Text(
+                                        buildAnnotatedString {
+                                            append("Book a session with a ")
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append("licensed therapist")
+                                            }
+                                            append(" to explore your results in a supportive space.")
+                                        },
+                                        fontSize = 14.sp,
+                                        lineHeight = 22.sp,
+                                        textAlign = TextAlign.Center,
+                                        color = Color.White,
+                                        style = TextStyle(
+                                            shadow = Shadow(
+                                                color = Color(0x33000000),
+                                                offset = Offset(1f, 1f),
+                                                blurRadius = 2f
+                                            )
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
 
-                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Spacer(modifier = Modifier.height(24.dp))
                             }
 
                             GradientButton(
@@ -584,7 +691,7 @@ fun DrawSenseScreen(
 @Composable
 fun GradientButton(
     text: String,
-    gradientColors: List<Color> = listOf(Color(0xFFE8DEFF), Color(0xFFE1FAFF)), // background
+    gradientColors: List<Color> = listOf(Color(0x663B00FF), Color(0x4D24CDFF)), // background
     textGradientColors: List<Color> = listOf(Color(0xFF7BB7FC), Color(0xFF00E6C0)), // text
     modifier: Modifier = Modifier,
     onClick: () -> Unit
@@ -612,17 +719,22 @@ fun GradientButton(
             ) {
                 Text(
                     text = text,
+                    color = Color.White,
                     style = TextStyle(
-                        brush = Brush.horizontalGradient(textGradientColors),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        shadow = Shadow(
+                            color = Color(0x33000000), // abu-abu gelap semi transparan
+                            offset = Offset(1f, 1f),
+                            blurRadius = 2f
+                        )
                     )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.ArrowForward, // default arrow
                     contentDescription = null,
-                    tint = Color(0xFF00E6C0), // sesuaikan dengan akhir gradien jika ingin harmonis
+                    tint = Color.White, // sesuaikan dengan akhir gradien jika ingin harmonis
                     modifier = Modifier.size(18.dp)
                 )
             }

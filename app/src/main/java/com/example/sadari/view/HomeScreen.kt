@@ -203,7 +203,7 @@ fun FeatureCard(label: String, image: String, onClick: () -> Unit = {}) {
         )
         Text(
             label,
-            fontSize = 12.sp,
+            fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 8.dp)
         )
