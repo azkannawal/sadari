@@ -38,10 +38,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -64,12 +66,14 @@ fun HomeScreen(navController: NavController) {
             )
     ) {
         HeaderSection(userName = "John Doe")
-        GradientSearchBar(
-            modifier = Modifier
-                .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 16.dp)
-        )
-        FeatureIconSection(navController)
-        MeditationCard(navController)
+//        GradientSearchBar(
+//            modifier = Modifier
+//                .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 1.dp)
+//        )
+        ProgressCardSection()
+        CategorySection(navController)
+//        FeatureIconSection(navController)
+//        MeditationCard(navController)
         TherapistAvailabilitySection(navController)
 
         Spacer(modifier = Modifier.height(80.dp))
@@ -81,7 +85,7 @@ fun HeaderSection(userName: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, bottom = 24.dp, top = 38.dp, end = 24.dp)
+            .padding(start = 24.dp, bottom = 24.dp, top = 38.dp, end = 12.dp)
     ) {
 
         GradientText("Hello, $userName!")
@@ -151,6 +155,186 @@ fun GradientSearchBar(
     }
 }
 
+@Composable
+fun CategorySection(navController: NavController) {
+    Column(modifier = Modifier.padding(24.dp)) {
+        Text(
+            text = "Popular Categories",
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Color(0xFF333333)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CategoryCard(
+                title = "DrawSense AI",
+                iconRes = R.drawable.frame_31,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("drawsense") }
+            )
+            CategoryCard(
+                title = "Online Therapist",
+                iconRes = R.drawable.frame_33,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("drawsense") }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CategoryCard(
+                title = "Guided Meditation",
+                iconRes = R.drawable.frame_34,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("drawsense") }
+            )
+            CategoryCard(
+                title = "Journaling Space",
+                iconRes = R.drawable.frame_32,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("drawsense") }
+            )
+        }
+    }
+}
+@Composable
+fun CategoryCard(
+    title: String,
+    iconRes: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
+        modifier = modifier
+            .height(160.dp)
+            .clickable { onClick() } // Tambahkan ini untuk navigasi
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = title,
+                modifier = Modifier.size(86.dp)
+            )
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                color = Color(0xFF333333),
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun ProgressCardSection() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 1.dp)
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color(0xFF7BB7FC), Color(0xFF00E6C0))
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(16.dp)
+    ) {
+        Column {
+            Text(
+                text = "Your Progress",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp),
+                style = TextStyle(
+                    shadow = Shadow(
+                        color = Color(0x33000000),
+                        offset = Offset(1f, 1f),
+                        blurRadius = 2f
+                    )
+                )
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ProgressItem(
+                    title = "25 Feb",
+                    subtitle = "Check Progress",
+                    modifier = Modifier.weight(1f)
+                )
+
+                ProgressItem(
+                    title = "50%",
+                    subtitle = "Milestone",
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ProgressItem(title: String, subtitle: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.15f),
+                        Color.White.copy(alpha = 0.05f)
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+    ) {
+        Column {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                style = TextStyle(
+                    shadow = Shadow(
+                        color = Color(0x55000000),
+                        offset = Offset(1f, 1f),
+                        blurRadius = 4f
+                    )
+                )
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = subtitle,
+                fontSize = 12.sp,
+                color = Color.White
+            )
+        }
+    }
+}
+
 
 @Composable
 fun FeatureIconSection(navController: NavController) {
@@ -209,7 +393,6 @@ fun FeatureCard(label: String, image: String, onClick: () -> Unit = {}) {
         )
     }
 }
-
 
 @Composable
 fun MeditationCard(navController: NavController) {
@@ -273,11 +456,12 @@ fun MeditationCard(navController: NavController) {
     }
 }
 
-
 @Composable
 fun TherapistAvailabilitySection(navController: NavController) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Text("Therapists Availability", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text("Therapists Availability", fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -287,6 +471,8 @@ fun TherapistAvailabilitySection(navController: NavController) {
             color = Color.Gray,
             modifier = Modifier.padding(bottom = 12.dp)
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

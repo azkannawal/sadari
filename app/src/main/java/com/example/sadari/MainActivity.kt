@@ -85,16 +85,16 @@ fun MainApp() {
                 DrawSenseScreen()
             }
             composable("meditation") {
-                DetectorScreen()
+                HomeScreen(navController)
             }
             composable("ai") {
-                DetectorScreen()
+                HomeScreen(navController)
             }
             composable("profile") {
-                DetectorScreen()
+                HomeScreen(navController)
             }
             composable("consultation") {
-                DetectorScreen()
+                HomeScreen(navController)
             }
         }
     }
